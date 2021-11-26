@@ -1,5 +1,6 @@
 import React,{useState,useEffect} from 'react'
 import axios from "axios";
+import {Pagination,Grid,Card ,CardActions ,CardContent ,Typography} from "@mui/material";
 import "./index.css";
 const api = (page)=>{
     console.log(page)
@@ -11,16 +12,16 @@ const post1 = async (page)=>{
     return response.data.hits;
 
 }
-const io = (len)=>{
-    let i = 0;
-    var ls = [];
-  while (i<len)
-    {
-        ls.push(i);
-        i++;
-    }
-    return ls
-}
+// const io = (len)=>{
+//     let i = 0;
+//     var ls = [];
+//   while (i<len)
+//     {
+//         ls.push(i);
+//         i++;
+//     }
+//     return ls
+// }
 var page=0;
 export default function Index() {
     const [post, setstate] = useState([])
@@ -40,7 +41,15 @@ export default function Index() {
         temp.push(value)
         setPage(0);
         setstate(temp)
-        setTemp(post[currentpage])
+        var temp1=post[currentpage];
+        // setTemp(post[currentpage])
+        var i=0;
+            var temp2=[];
+            while (i<temp1.length){
+                temp2.push(temp1.slice(i,i+3));
+                i=i+3;
+            }
+            setTemp(temp2);
         setCounter(counter+1);
         page++;
         console.log(1);
@@ -52,7 +61,16 @@ export default function Index() {
             temp.push(value);
             setPage(0);
             setstate(temp);
-            setTemp(post[currentpage])
+            
+            // setTemp(post[currentpage])
+            var temp1=post[currentpage];
+            var i=0;
+            var temp2=[];
+            while (i<temp1.length){
+                temp2.push(temp1.slice(i,i+3));
+                i=i+3;
+            }
+            setTemp(temp2);
             setCounter(counter+1);
           page++
         },10000);
@@ -66,7 +84,7 @@ export default function Index() {
     return (
         <div>
         {!loading?<div>Loading....</div>:<></>}
-          <div className="row1">
+          {/* <div className="row1">
               {io(post.length).map((value,index)=>{
                   return (
                       <div className="item1">
@@ -78,34 +96,76 @@ export default function Index() {
                       </div>
                   )
               })}
-          </div>
-          Posts :-
+          </div> */}
+
+          {/* Posts :- */}
            {temp.map((value,index)=>{
-               return ( 
-                   <div className="column1" key={index}>
-                  
-                <div className="item1"> title:- {value.title} </div>
-                <div className="item1">
-                
-                <a href={value.url}>post link</a>
-                </div>
-                <div className="item1">author:-{value.author}</div>
-                <div className="item1">created_at:{value.created_at_i}</div>
-                <div className="item1">
-                <div className="row1">
-                Tags:
-                    {"_tags" in value ?value._tags.map((value1,index)=>{
-                        return (
+               return (
+                   <>
+                   <Grid container justifyContent={"center"} spacing={2} style={{margin:"2%"}}>
+                       {value.map((value1,index1)=>(
+                           <Grid item xs={3}>
+                               <Card >
+                                   <CardContent>
+                                       <Typography> Title :- {value1.title}</Typography>
+                                       <Typography> Link :- <a href={value1.url}>post link</a></Typography>
+                                       <Typography>author:-{value1.author}</Typography>
+                                       <Typography>created_at:{new Date(value1.created_at_i).toISOString()}</Typography>
+                                       <Typography>Tags:{
+                                                    "_tags" in value1 ?value1._tags.map((value11,index)=>{
+                                return (
                             <div className="item1">
-                            {value1}
+                            {value11}
                             </div>
                         )
-                    }):<></>}
-                    </div>
-                </div>
-            </div>)
+                    }):<></>
+                                           
+                                           }</Typography>
+                                      
+                                   </CardContent>
+                               </Card>
+                           </Grid>
+                       ))}
+                   </Grid>
+                   </>
+               )
+            //    return ( 
+            //        <div className="column1" key={index}>
+                  
+            //     <div className="item1"> title:- {value.title} </div>
+            //     <div className="item1">
+                
+            //     <a href={value.url}>post link</a>
+            //     </div>
+            //     <div className="item1">author:-{value.author}</div>
+            //     <div className="item1">created_at:{value.created_at_i}</div>
+            //     <div className="item1">
+            //     <div className="row1">
+            //     Tags:
+            //         {"_tags" in value ?value._tags.map((value1,index)=>{
+            //             return (
+            //                 <div className="item1">
+            //                 {value1}
+            //                 </div>
+            //             )
+            //         }):<></>}
+            //         </div>
+            //     </div>
+            // </div>)
            })}
-         
+           <div style={{display:"flex",flexDirection:"row",justifyContent:"center"}}> <Pagination count={post.length} onChange={(e,value)=>{
+                // console.log(e);
+                var temp1=post[value-1];
+                var i=0;
+                var temp2=[];
+                while (i<temp1.length){
+                    temp2.push(temp1.slice(i,i+3));
+                    i=i+3;
+                }
+                setTemp(temp2);
+                setPage(value);
+           }} color="primary"></Pagination></div>
+        
         </div>
     )
 }
